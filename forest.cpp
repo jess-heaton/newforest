@@ -10,10 +10,10 @@
 #include <sstream>       
 
 // Cell states
-static const int EMPTY   = 0;
-static const int TREE    = 1;
+static const int EMPTY = 0;
+static const int TREE = 1;
 static const int BURNING = 2;
-static const int DEAD    = 3;
+static const int DEAD = 3;
 
 
 // Divide grid into blocks for different processes to handle
@@ -22,7 +22,7 @@ void distribute_grid(int N, int iproc, int nproc, int &i0, int &i1)
     int block = N / nproc;
     i0 = iproc * block;
     
-    // Checks if process is last one 
+    // Check if process is last one 
     if (iproc == nproc - 1) {
         i1 = N;
     } else {
@@ -107,11 +107,10 @@ std::vector<int> generate_random_grid(int N, double p, int iproc, int nproc, int
         for (int i = 0; i < N * N; i++) {
             double r = randomNumber(generator);
             if (r < p) {
-                // Assign TREE if the random number is less than p
+                
+                // Assign tree if the random number is less than p
                 grid[i] = TREE;
             } else {
-
-                // Otherwise EMPTY
                 grid[i] = EMPTY;
             }
         }
@@ -130,7 +129,7 @@ std::vector<int> generate_random_grid(int N, double p, int iproc, int nproc, int
 }
 
 // Simulation step 
-// (added Moore Neighbourhood option as an extension - hard coded parameter)
+// (added Moore Neighbourhood option as an extension - hard-coded param)
 bool step(std::vector<int> &oldGrid, int N, int iproc, int nproc, int i0, int i1, bool moore=false) {
     
     std::vector<int> newGrid(oldGrid); 
@@ -146,15 +145,15 @@ bool step(std::vector<int> &oldGrid, int N, int iproc, int nproc, int i0, int i1
     int d8i[8] = {-1, -1, -1,  0,  0,  1,  1,  1};
     int d8j[8] = {-1,  0,  1, -1,  1, -1,  0,  1};
 
-    // Only rows assigned to this process
+    // Only for rows assigned to this process
     for (int i = i0; i < i1; i++) {
 
-        // Over columns
+        // Over cols
         for (int j = 0; j < N; j++) {
             int idx = i*N + j;
             if (oldGrid[idx] == BURNING) {
                 
-                // Transform burning cells to dead trees
+                // Transform burning cells to dead
                 newGrid[idx] = DEAD;
 
                 // Work out neighbours according to chosen method
@@ -219,10 +218,10 @@ int main(int argc, char* argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &nproc);
 
     // Default params
-    int    N       = 100;
-    double p       = 0.5;
-    int    M       = 50;
-    bool   useFile = false;
+    int N = 100;
+    double p = 0.5;
+    int M = 50;
+    bool useFile = false;
 
     std::string filename;
 
@@ -251,8 +250,8 @@ int main(int argc, char* argv[]) {
 
     // Vars for total M runs
     double totalSteps = 0.0;
-    double totalTime  = 0.0;
-    int    totalHitBottom = 0;
+    double totalTime = 0.0;
+    int totalHitBottom = 0;
 
     // Read grid from file if given
     std::vector<int> fileGridData;
@@ -324,7 +323,7 @@ int main(int argc, char* argv[]) {
 
     // Averages
     double avgSteps = totalSteps / M;
-    double avgTime  = totalTime  / M;
+    double avgTime = totalTime / M;
     double bottomFraction = 0.0;
 
     if (iproc == 0) {
@@ -333,14 +332,7 @@ int main(int argc, char* argv[]) {
 
     // Print results
     if (iproc == 0) {
-        std::cout << nproc << " "
-                  << N << " "
-                  << p << " "
-                  << M << " "
-                  << avgSteps << " "
-                  << avgTime << " "
-                  << bottomFraction
-                  << std::endl;
+        std::cout << nproc << " "<< N << " "<< p << " " << M << " " << avgSteps << " " << avgTime << " " << bottomFraction << std::endl;
     }
 
     MPI_Finalize();
