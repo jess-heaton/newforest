@@ -300,7 +300,7 @@ int main(int argc, char* argv[])
 
         // Keep stepping until no cells are burning
         while (true) {
-            bool burning = step_forest_fire(gridData, N, iproc, nproc, i0, i1);
+            bool burning = step_forest_fire(gridData, N, iproc, nproc, i0, i1, true);
             if (burning) steps++;
             else break;
         }
